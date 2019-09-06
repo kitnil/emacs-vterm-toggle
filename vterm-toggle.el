@@ -49,12 +49,6 @@
   :group 'vterm-toggle
   :type 'symbolp)
 
-(defcustom vterm-toggle-prompt-regexp
-  (concat "\\(?:^\\|\r\\)"
-	      "[^]#$%>\n]*#?[#$%➜⇒»☞@λ] *\\(\e\\[[0-9;]*[a-zA-Z] *\\)*")
-  "Vterm prompt regexp."
-  :group 'vterm-toggle
-  :type 'string)
 (defcustom vterm-toggle-fullscreen-p t
   "Open vterm buffer fullscreen or not."
   :group 'vterm-toggle
@@ -201,20 +195,6 @@ Optional argument ARGS optional args."
       (vterm)
     (vterm-other-window)))
 
-(defun vterm-toggle--skip-prompt ()
-  "Skip past the text matching regexp `vterm-toggle-prompt-regexp'.
-If this takes us past the end of the current line, don't skip at all."
-  (let ((eol (line-end-position)))
-    (when (and (looking-at vterm-toggle-prompt-regexp)
-	           (<= (match-end 0) eol))
-      (goto-char (match-end 0)))))
-
-(defun vterm-toggle--accept-cmd-p ()
-  "Check whether the vterm can accept user comand."
-  (save-excursion
-    (goto-char (point-at-bol))
-    (vterm-toggle--skip-prompt)))
-
 
 (defun vterm-toggle--get-buffer(&optional make-cd args)
   "Get vterm buffer.
@@ -251,7 +231,7 @@ Optional argument ARGS optional args."
                 (with-parsed-tramp-file-name default-directory nil
                   (setq vterm-host host))
               (setq vterm-host (system-name)))
-            (when (and (vterm-toggle--accept-cmd-p)
+            (when (and (vterm--at-prompt-p)
                        (equal buffer-host vterm-host))
               (unless shell-buffer
                 (setq shell-buffer buf))))
