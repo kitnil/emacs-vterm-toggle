@@ -150,7 +150,11 @@ Optional argument ARGS optional args."
           (with-parsed-tramp-file-name dir nil
             (setq remote-p t)
             (setq cur-host host)
-            (setq cur-user user)
+            (if (string= user "root")
+                (progn (setq cur-user "eng")
+                       (setq cur-sudo t))
+              (progn (setq cur-user user)
+                     (setq cur-sudo nil)))
             (setq cur-port (if port (concat ":" port) ""))
             (setq dir localname))
         (setq cur-host (system-name)))
