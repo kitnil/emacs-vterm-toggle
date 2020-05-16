@@ -158,7 +158,10 @@ Optional argument ARGS optional args."
             (setq cur-port (if port (concat ":" port) ""))
             (setq dir localname))
         (setq cur-host (system-name)))
-      (setq cd-cmd (concat " cd " (shell-quote-argument dir))))
+      (setq cd-cmd (if cur-sudo
+                       (format " sudo --login /usr/bin/env bash -c \"cd %s; exec -a bash /usr/bin/env bash\" "
+                               (shell-quote-argument dir))
+                     (concat " cd " (shell-quote-argument dir)))))
     (if shell-buffer
         (progn
           (when (and (not (funcall vterm-toggle--vterm-buffer-p-function args))
