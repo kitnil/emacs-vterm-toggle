@@ -196,7 +196,8 @@ Optional argument ARGS optional args."
           (run-hook-with-args 'vterm-toggle-after-ssh-login-function
                               cur-user cur-host cur-port dir)
           (vterm-send-string cd-cmd t)
-          (vterm-send-return))
+          (vterm-send-return)
+          (rename-buffer (concat "vterm@" cur-host)))
         (when vterm-toggle-fullscreen-p
           (delete-other-windows))
         (run-hooks 'vterm-toggle-show-hook)))
